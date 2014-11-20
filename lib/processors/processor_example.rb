@@ -14,25 +14,12 @@ class Srobsk
         :certificate_number,
         :ogrn
     ]
-
-    @not_required_fields = [
-        :manager_position,
-        :manager_name,
-        :manager_last_name,
-        :manager_surname,
-        :phone,
-        :fax,
-        :email,
-        :KPP,
-        :site
-    ]
-
     @data = []
   end
 
   def perform
-    collect_links
-    iterate
+    collect_links # Сбор ссылок
+    iterate # Переход и сбор информации
     @data
   end
 
@@ -125,43 +112,4 @@ class Srobsk
     slice = Capybara.all(:xpath,'//div[@class="panel-body"]/table/tbody/tr/td[contains(text(),"ОГРН:")]/following::td').first
     slice ? slice.text : "-"
   end
-
-  ## Not required fields ##
-
-  def manager_position
-
-  end
-
-  def manager_name
-
-  end
-
-  def manager_surname
-
-  end
-
-  def manager_last_name
-
-  end
-
-  def phone
-
-  end
-
-  def fax
-
-  end
-
-  def email
-
-  end
-
-  def site
-
-  end
-
-  def KPP
-
-  end
-
 end
