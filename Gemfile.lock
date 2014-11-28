@@ -66,5 +66,6 @@ DEPENDENCIES
   byebug
   capybara
   mysql2
+  nokogiri
   poltergeist
   whenever
