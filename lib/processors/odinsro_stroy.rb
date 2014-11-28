@@ -1,4 +1,4 @@
-class Odinso_stroy
+class OdinsroStroy
   def initialize
     @host = 'http://odinsro-stroy.ru'
     @list_link = 'http://odinsro-stroy.ru/reestr/'
@@ -53,7 +53,7 @@ class Odinso_stroy
         end
       end
 
-      @data << tmp if tmp[:status] #@data = [tmp, {@required_fields[0] => 'value'}]
+      @data << tmp #@data = [tmp, {@required_fields[0] => 'value'}]
     end
   end
 
@@ -95,19 +95,14 @@ class Odinso_stroy
 
   def status
     slice = @doc.css('li:not(:first-child) td.t7').text    
-    if slice.include? '----------'
-      :w
-    elsif slice.include? 'Исключен' or slice.include? 'Выбыл'
-      false
-    else
-      '-'
-    end
+    return :w if slice.include? '----------'
+    return :e if (slice.include? 'Исключен') || (slice.include? 'Выбыл')
+    '-'
   end
 
   def resolution_date
-    slice = @doc.css('tr:nth-child(8) span.font5').text
-    slice = @doc.css('tr:nth-child(8) p:first-child').text if slice == ""
-    slice.split(' от ')[1].strip
+    slice = @doc.css('tr:nth-child(8) td:nth-child(2)').text
+    slice[/\d{2}\.\d{2}\.\d{4}/] #gets first date from td
   end
 
   def legal_address
@@ -115,12 +110,14 @@ class Odinso_stroy
   end
 
   def certificate_number
-    slice = @doc.css('tr:nth-child(8) span.font5').text
-    if slice.include? 'свидетельство'
-      slice.split('свидетельство')[1].split('от')[0].strip 
+    slice = @doc.css('tr:nth-child(8) td:nth-child(2)').text
+    if slice.include? '№ '
+      slice = slice.split('№ ')[1].split(' ')[0]
     else
-      slice.split('от')[0].strip
+      slice = slice.split('№')[1].split(' ')[0]
     end
+    slice.slice! 'от'
+    slice
   end
 
   def ogrn
