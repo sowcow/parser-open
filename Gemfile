@@ -10,4 +10,6 @@ gem 'poltergeist'
 
 gem 'byebug'
 
+gem 'nokogiri'
+
 gem 'whenever', :require => false
