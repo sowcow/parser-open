@@ -41,7 +41,7 @@ class OdinsroStroy
         @doc = Nokogiri::HTML(open(URI.encode(link)))
       rescue
         puts 'next link'
-        next
+        next #if link is inaccessible
       end
 
       tmp = Hash.new
@@ -49,7 +49,7 @@ class OdinsroStroy
         begin
           tmp.merge!(m => self.send(m))
         rescue
-          tmp.merge!(m => '-')
+          tmp.merge!(m => '-') #if there was an error in data retrieval, pretend it's -
         end
       end
 
@@ -61,68 +61,61 @@ class OdinsroStroy
 
   ## Required fields ##
   def inn
-    slice = @doc.css('li:not(:first-child) td.t5').text.split('/')
-    slice[0].strip
+    raw = @doc.css('li:not(:first-child) td.t5').text
+    raw.split('/')[0].strip
   end
 
   def short_name
-    slice = @doc.css('li:not(:first-child) td.t3').text.split('/ ')
-    slice[1] ? slice[1].strip : '-'
+    raw = @doc.css('li:not(:first-child) td.t3').text
+    raw.split('/')[1].strip
   end
 
   def name
-    slice = @doc.css('li:not(:first-child) td.t3').text
-    slice.split('/ ')[0].strip
+    raw = @doc.css('li:not(:first-child) td.t3').text
+    raw.split('/')[0].strip
   end
 
   def city
-    slice = @doc.css('li:not(:first-child) td.t4').text
+    raw = @doc.css('li:not(:first-child) td.t4').text
+    test1 = raw[/[пгс][.]\s?[А-Яа-я-]+/]
+    test2 = raw[/,\s?[А-Яа-я-]+\s[гп].?\w?,/]
+    test4 = raw[/,\s?[А-Яа-я-]+/]
+    city =  
+      if test1
+        test1.to_s
+      elsif test2
+        test2.to_s
+      elsif test4
+        test3.to_s
+      end
 
-    if slice.include? 'г. '
-      slice = 'г. ' + slice.split('г. ')[1].split(' ')[0]
-    elsif slice.include? 'п. '
-      slice = 'п. ' + slice.split('п. ')[1].split(' ')[0]
-    elsif slice.include? ' г,'
-      slice = 'г. ' + slice.split(' г,')[0].strip.split(' ').last
-    elsif slice.include? ' п,'
-      slice = 'п. ' + slice.split(' п,')[0].strip.split(' ').last
-    else
-      slice = '-'
-    end
-    slice.slice!(',') if slice.include? ','
-    slice.strip
+    city.gsub(',', '').strip
   end
 
   def status
-    slice = @doc.css('li:not(:first-child) td.t7').text    
-    return :w if slice.include? '----------'
-    return :e if (slice.include? 'Исключен') || (slice.include? 'Выбыл')
+    raw = @doc.css('li:not(:first-child) td.t7').text    
+    return :w if raw.include? '-------'
+    return :e if (raw.include? 'Исключен') || (raw.include? 'Выбыл')
     '-'
   end
 
   def resolution_date
-    slice = @doc.css('tr:nth-child(8) td:nth-child(2)').text
-    slice[/\d{2}\.\d{2}\.\d{4}/] #gets first date from td
+    raw = @doc.css('tr:nth-child(8) td:nth-child(2)').text
+    raw[/\d{2}\.\d{2}\.\d{4}/] #gets first date from td
   end
 
   def legal_address
-    slice = @doc.css('li:not(:first-child) td.t4').text
+    raw = @doc.css('li:not(:first-child) td.t4').text
   end
 
   def certificate_number
-    slice = @doc.css('tr:nth-child(8) td:nth-child(2)').text
-    if slice.include? '№ '
-      slice = slice.split('№ ')[1].split(' ')[0]
-    else
-      slice = slice.split('№')[1].split(' ')[0]
-    end
-    slice.slice! 'от'
-    slice
+    raw = @doc.css('tr:nth-child(8) td:nth-child(2)').text
+    raw[/№\s?[\w\.\-А-Яа-я]+/]
   end
 
   def ogrn
-    slice = @doc.css('li:not(:first-child) td.t5').text.split('/')
-    slice[1].strip
+    raw = @doc.css('li:not(:first-child) td.t5').text.split('/')
+    raw[1].strip
   end
 end
 
