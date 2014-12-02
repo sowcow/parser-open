@@ -36,7 +36,7 @@ class Sibrp
   end
 
   def iterate
-    @links[10..10].each do |link|
+    @links.each do |link|
       puts "openinig #{link}"
       begin
         @doc = Nokogiri::HTML(open(URI.encode(link)))

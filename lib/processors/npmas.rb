@@ -28,7 +28,7 @@ class Npmas
   def collect_links
     doc = Nokogiri::HTML(open(@list_link))
     pages = [@list_link] 
-    doc.css('table+p a')[5..7].each do |link|
+    doc.css('table+p a').each do |link|
       pages.push "#{@host}/#{link['href']}"
     end
 
