@@ -19,13 +19,13 @@ class Exporter
 
   private
 
-  def mysql(data)
-    # Simple and plain export, for starters
-    data.each do |row|
-      row[:status] = Exporter.statuses[row[:status]]
-      @source.companies.find_or_create_by(inn: row[:inn]).update_attributes!(row)
-    end
-  end
+  # def mysql(data)
+  #   # Simple and plain export, for starters
+  #   data.each do |row|
+  #     row[:status] = Exporter.statuses[row[:status]]
+  #     @source.companies.find_or_create_by(inn: row[:inn]).update_attributes!(row)
+  #   end
+  # end
 
   def csv(data)
     filename = "data/#{@source[:registry_number]}.csv"
