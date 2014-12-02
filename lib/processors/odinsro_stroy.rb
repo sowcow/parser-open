@@ -1,18 +1,18 @@
 class OdinsroStroy
   def initialize
     @host = 'http://odinsro-stroy.ru'
-    @list_link = 'http://odinsro-stroy.ru/reestr/'
+    @list_link = 'http://odinsro-stroy.ru/reestr'
     @data_link_template = ''
     @required_fields = [
-        :inn,
-        :name,
-        :short_name,
-        :city,
-        :status,
-        :resolution_date,
-        :legal_address,
-        :certificate_number,
-        :ogrn
+      :inn,
+      :name,
+      :short_name,
+      :city,
+      :status,
+      :resolution_date,
+      :legal_address,
+      :certificate_number,
+      :ogrn
     ]
     @data = []
   end
@@ -47,10 +47,12 @@ class OdinsroStroy
       tmp = Hash.new
       @required_fields.each do |m|
         begin
-          tmp.merge!(m => self.send(m))
+          value = self.send(m) #for status symbols
+          value = value.strip if value.is_a? String
+          tmp.merge! m => value
         rescue
           tmp.merge!(m => '-') #if there was an error in data retrieval, pretend it's -
-        end
+        end 
       end
 
       @data << tmp #@data = [tmp, {@required_fields[0] => 'value'}]
@@ -62,24 +64,24 @@ class OdinsroStroy
   ## Required fields ##
   def inn
     raw = @doc.css('li:not(:first-child) td.t5').text
-    raw.split('/')[0].strip
+    raw.split('/')[0]
   end
 
   def short_name
     raw = @doc.css('li:not(:first-child) td.t3').text
-    raw.split('/')[1].strip
+    raw.split('/')[1]
   end
 
   def name
     raw = @doc.css('li:not(:first-child) td.t3').text
-    raw.split('/')[0].strip
+    raw.split('/')[0]
   end
 
   def city
     raw = @doc.css('li:not(:first-child) td.t4').text
-    test1 = raw[/[пгс][.]\s?[А-Яа-я-]+/]
-    test2 = raw[/,\s?[А-Яа-я-]+\s[гп].?\w?,/]
-    test4 = raw[/,\s?[А-Яа-я-]+/]
+    test1 = raw[/[пгс][.]\s?[А-Яа-я\- ]+/]
+    test2 = raw[/,\s?[А-Яа-я\- ]+\s[гп].?\w?,/]
+    test4 = raw[/,\s?[А-Яа-я\- ]+/]
     city =  
       if test1
         test1.to_s
@@ -89,7 +91,7 @@ class OdinsroStroy
         test3.to_s
       end
 
-    city.gsub(',', '').strip
+    city.gsub(',', '')
   end
 
   def status
@@ -114,8 +116,8 @@ class OdinsroStroy
   end
 
   def ogrn
-    raw = @doc.css('li:not(:first-child) td.t5').text.split('/')
-    raw[1].strip
+    raw = @doc.css('li:not(:first-child) td.t5').text
+    raw.split('/')[1]
   end
 end
 
