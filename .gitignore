@@ -1,3 +1,3 @@
 .idea/
 data/*.*
-./lib/processors/test.rb
+/lib/processors/test.rb
