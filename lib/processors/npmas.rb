@@ -45,7 +45,7 @@ class Npmas
     @links.each do |link|
       puts "openinig #{link}\n"
       begin
-        Capybara.visit(link)
+        Capybara.visit link
       rescue => detail
         tell detail
         puts 'next link'
@@ -54,7 +54,7 @@ class Npmas
 
       tmp = Hash.new
       @required_fields.each do |m|
-          value = self.send(m) #for status symbols
+          value = self.send m #for status symbols
           value = value.strip if value.is_a? String
           tmp.merge! m => value
       end
