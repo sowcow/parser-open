@@ -2,7 +2,7 @@ class Sroglavstroy
   def initialize
     @host = 'http://www.sroglavstroy.ru'
     @list_of_links_w = 'http://www.sroglavstroy.ru/reestr1/index.php'
-    @list_of_links_e = 'http://stroitel.sro-stroyproekt.com/reestr/easytable/7-passive' #time
+    @list_of_links_e = 'http://stroitel.sro-stroyproekt.com/reestr/easytable/7-passive'
     @required_fields = [
       :inn,
       :name,
@@ -30,8 +30,7 @@ class Sroglavstroy
 
   def collect_links list_of_links
     next_src = list_of_links
-    # while true
-    2.times do
+    while true
       doc = Nokogiri::HTML(open(next_src))
       doc.css('.news-list tbody tr:not(:first-child)').each do |tr|
         @links.push "#{@host}#{tr.css('a')[0]['href']}"

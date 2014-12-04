@@ -2,7 +2,6 @@ class Sibrp
   def initialize
     @host = 'http://www.sibrp.ru'
     @list_link = 'http://www.sibrp.ru/members'
-    @data_link_template = ''
     @required_fields = [
       :inn,
       :name,

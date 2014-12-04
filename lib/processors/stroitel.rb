@@ -110,5 +110,3 @@ class Stroitel
     raw = @table.css('tr')[4].css('td')[1].text
   end
 end
-
-
