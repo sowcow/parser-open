@@ -23,7 +23,7 @@ class Stroitel
     collect_links 'http://stroitel.sro-stroyproekt.com/reestr/easytable/7-passive', '#passive'
     iterate :e # собрать ссылки вышедших членов
 
-    p @data
+    @data
   end
 
   private
