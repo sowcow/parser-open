@@ -135,10 +135,3 @@ class Sroglavstroy
     raw = @table.at('tr td:contains("Основной государственный регистрационный номер ОГРН")+td p').text
   end
 end
-
-
-Sroglavstroy.new.perform
-
-
-
-#ждать пока он ответит про статус и потом проверить поля
