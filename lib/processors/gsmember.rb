@@ -41,7 +41,7 @@ class Gsmember
   end
 
   def iterate
-    @links[0..10].each do |link|
+    @links.each do |link|
       puts "start parsing #{link}"
       begin
         @doc = Nokogiri::HTML(open(link))
