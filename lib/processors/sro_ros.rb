@@ -1,7 +1,7 @@
-class Sibrp
+class SroRos
   def initialize
-    @host = 'http://www.sibrp.ru'
-    @list_link = 'http://www.sibrp.ru/members'
+    @host = 'http://sro-ros.ru'
+    @list_link = 'http://sro-ros.ru/register/?SHOWALL_1=1#'
     @required_fields = [
       :inn,
       :name,
@@ -28,17 +28,17 @@ class Sibrp
   def collect_links
     doc = Nokogiri::HTML(open(@list_link))
     @links = [] 
-    doc.css('#content-area table.views-table a').each do |link|
+    doc.css('.reestr tbody td a').each do |link|
       @links.push "#{@host}/#{link['href']}"
     end
-    @links
   end
 
   def iterate
     @links.each do |link|
-      puts "openinig #{link}"
+      puts "start parsing #{link}"
       begin
-        @doc = Nokogiri::HTML(open(URI.encode(link)))
+        doc = Nokogiri::HTML(open(URI.encode(link)))
+        @table = doc.at('.news-detail')
       rescue
         puts 'next link'
         next #if link is inaccessible
@@ -46,36 +46,36 @@ class Sibrp
 
       tmp = Hash.new
       @required_fields.each do |m|
-          value = self.send(m) #for status symbols
-          value = value.strip if value.is_a? String
-          tmp.merge! m => value
+        value = self.send m #for status symbols
+        value = value.strip if value.is_a? String
+        tmp.merge! m => value
       end
       @data << tmp #@data = [tmp, {@required_fields[0] => 'value'}]
+      puts "parsed"
     end
-    @data
+    p @data
   end
 
   #### Fields methods ####
 
   ## Required fields ##
   def inn
-    raw = @doc.css('.field-field-member-inn .field-items').text
+    raw = @table.css('tr')[2].css('td')[1].text
   end
 
   def short_name
-    raw = @doc.css('h1.title').text
+    '-'
   end
 
   def name
-    raw = @doc.css('.field-field-member-title-long .field-items').text
+    raw = @table.css('h3').text
   end
 
   def city
-    raw = @doc.css('.field-field-member-address-legal .field-items').text
-
+    raw = @table.css('tr')[0].css('td')[1].text
     test1 = raw.match /\b((пос|гор|пгт|рп)\. [А-Яа-я\- ]+)\b/
     test2 = raw.match /\b([гсдп]\. ?[А-Яа-я\- ]+)\b/
-    test3 = raw.match /\b((р.п.|рабочий поселок) [А-Яа-я\- ]+)\b/
+    test3 = raw.match /\b((р.п.|рабочий поселок|город) [А-Яа-я\- ]+)\b/
 
     if test1
       test1[1]  
@@ -87,34 +87,26 @@ class Sibrp
   end
 
   def status
-    raw = @doc.css('.member-note').text    
-    return :w if raw == ""
-    return :e if (raw.include? 'прекращено')
-    return :p if (raw.include? 'приостановлено')
-    '-'
+    raw = @table.css('tr')[9].css('td')[1].text    
+    return :w if (raw.include? 'Действует')
+    raw
   end
 
   def resolution_date
-    raw = @doc.css('.field-field-member-certificate-date .field-items').text
+    raw = @table.css('tr')[1].css('td')[1].text
   end
 
   def legal_address
-    raw = @doc.css('.field-field-member-address-legal .field-items').text
+    raw = @table.css('tr')[0].css('td')[1].text
   end
 
   def certificate_number
-    raw = @doc.css('.field-field-member-certificate-number .field-items').text
+    raw = @table.css('tr')[3].css('td')[1].text
   end
 
   def ogrn
-    raw = @doc.css('.field-field-member-ogrn .field-items').text
+    raw = @table.css('tr')[4].css('td')[1].text
+    raw.strip[/\A\d+/]
   end
 end
-
-
-
-
-
-
-
 
