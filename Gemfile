@@ -11,5 +11,6 @@ gem 'poltergeist'
 gem 'byebug'
 
 gem 'nokogiri'
+gem 'rest_client'
 
 gem 'whenever', :require => false
