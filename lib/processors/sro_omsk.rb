@@ -27,7 +27,7 @@ class SroOmsk
   def collect_links
     Capybara.visit @list_of_links
     raw_ids = Capybara.first('#pagerjqxgrid > div > div:nth-child(3)').text 
-    @ids = links_on_page.split(' ').last.to_i
+    @ids = links_on_page.split(' ').last.to_i - 1
   end
 
   def iterate
