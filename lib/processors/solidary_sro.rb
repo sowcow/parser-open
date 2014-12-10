@@ -19,7 +19,7 @@ class SolidarySro
     collect_links # сбор ссылок
     iterate # собрать ссылки действующих членов
 
-    p @data
+    @data
   end
 
   private
@@ -49,7 +49,7 @@ class SolidarySro
   end
 
   def iterate
-    @links[0..5].each do |link|
+    @links.each do |link|
       puts "openinig #{link}\n\n"
       begin
         @doc = Nokogiri::HTML(open(link))
