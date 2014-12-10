@@ -121,11 +121,3 @@ class SolidarySro
   end
 
 end
-
-
-
-
-
-
-
-SolidarySro.new.perform
