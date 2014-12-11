@@ -4,15 +4,15 @@ class Srobsk
     @list_link = 'http://www.srobsk.ru/members/'
     @data_link_template = ''
     @required_fields = [
-        :inn,
-        :name,
-        :short_name,
-        :city,
-        :status,
-        :resolution_date,
-        :legal_address,
-        :certificate_number,
-        :ogrn
+      :inn,
+      :name,
+      :short_name,
+      :city,
+      :status,
+      :resolution_date,
+      :legal_address,
+      :certificate_number,
+      :ogrn
     ]
     @data = []
   end
