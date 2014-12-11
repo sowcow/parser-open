@@ -56,7 +56,7 @@ class Npdos
       @data << tmp #@data = [tmp, {@required_fields[0] => 'value'}]
       puts "parsed"
     end
-    p @data
+    @data
   end
 
   #### Fields methods ####
