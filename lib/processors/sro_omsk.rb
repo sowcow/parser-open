@@ -43,13 +43,13 @@ class SroOmsk
 
       tmp = Hash.new
       @required_fields.each do |m|
-        # begin
+        begin
           value = self.send m
           '-' if value.nil?
           value.strip! if value.is_a? String
-        # rescue
-        #   value = '-'
-        # end
+        rescue
+          value = '-'
+        end
         tmp.merge! m => value
       end
       @data << tmp #@data = [tmp, {@required_fields[0] => 'value'}]
