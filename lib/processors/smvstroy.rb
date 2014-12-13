@@ -6,12 +6,12 @@ class Smvstroy
       :inn,
       :name,
       :short_name,
+      :legal_address,
       :city,
       :status,
+      :ogrn,
       :resolution_date,
-      :legal_address,
-      :certificate_number,
-      :ogrn
+      :certificate_number
     ]
     @links = []
     @data = []
@@ -21,7 +21,7 @@ class Smvstroy
     collect_links # сбор ссылок
     iterate # собрать ссылки действующих членов
 
-    p @data
+    @data
   end
 
   private
@@ -29,20 +29,17 @@ class Smvstroy
   def collect_links
     Capybara.visit @list_of_links
 
-    while true do #because should have_css attempts failed
-      Capybara.has_css?('.x-grid3-body tr a') ? break : sleep(0.2)
-    end
-
-    links = Capybara.all('.x-grid3-body tr a')
+    Capybara.find '#ext-gen13-gp-region-Алтайский\20 край-bd > div.x-grid3-row.x-grid3-row-first > table > tbody > tr > td.x-grid3-col.x-grid3-cell.x-grid3-td-2.white-space-normal > div > a > span'
+    # .find waits by default. selector is so exact to escape ambiguous matching error. 
+    links = Capybara.all '.x-grid3-body tr a'
     links.each do |link|
       @links.push "#{@host}#{link['href']}"
     end
-    p @links
   end
 
   def iterate
-    @links[0..3].each do |link|
-      puts "openinig #{link}\n\n"
+    @links.each do |link|
+      puts "start scraping #{link}"
       begin
         Capybara.visit link
       rescue
@@ -52,15 +49,16 @@ class Smvstroy
 
       tmp = Hash.new
       @required_fields.each do |m|
+        Capybara.find '#the-table'
         begin
           value = self.send m
-          value = value.nil? ? '-' : value.strip
         rescue
           value = '-'
         end
         tmp.merge! m => value
       end
-      @data << tmp #@data = [tmp, {@required_fields[0] => 'value'}]
+      @data << tmp
+      puts 'scraped'
     end
   end
 
@@ -68,26 +66,25 @@ class Smvstroy
 
   #_ Required fields _#
   def inn
-    sleep 3
-    raw = Capybara.first('#the-table tr:nth-child(2) td:nth-child(2)').text
+    raw = Capybara.first(:xpath, '//tr[contains(.,"Инн")]/td[2]').text
   end
 
   def ogrn
-    raw = Capybara.first('#the-table tr:nth-child(2) td:nth-child(2)').text
+    raw = Capybara.first(:xpath, '//tr[contains(.,"Огрн")]/td[2]').text
   end
 
   def short_name
-    raw = Capybara.first('#the-table tr:nth-child(2) td:nth-child(2)').text
+    '-'
   end
 
   def name
-    raw = Capybara.first('#the-table tr:nth-child(2) td:nth-child(2)').text
+    raw = Capybara.first('#pag_title').text
   end
 
   def city
-    raw = Capybara.first('#the-table tr:nth-child(2) td:nth-child(2)').text
+    raw = Capybara.first(:xpath, '//tr[contains(.,"Адрес")]/td[2]').text
 
-    test1 = raw.match /\b((пос|гор|пгт|рп)\. [А-Яа-я\- ]+)\b/
+    test1 = raw.match /\b((пос|гор|пгт|рп|п.г.т.)\. [А-Яа-я\- ]+)\b/
     test2 = raw.match /\b([гсдп]\. ?[А-Яа-я\- ]+)\b/
     test3 = raw.match /\b((р.п.|рабочий поселок) [А-Яа-я\- ]+)\b/
 
@@ -101,17 +98,22 @@ class Smvstroy
   end
 
   def legal_address
-    raw = Capybara.first('#the-table tr:nth-child(2) td:nth-child(2)').text
+    raw = Capybara.first(:xpath, '//tr[contains(.,"Адрес")]/td[2]').text
   end
 
   def resolution_date
-    raw = Capybara.first('#the-table tr:nth-child(2) td:nth-child(2)').text
+    Capybara.find('#ext-gen25').click
+    raw = Capybara.first(:xpath, '//tr[contains(.,"Дата")]/td[2]').text
   end
 
   def certificate_number
-    raw = Capybara.first('#the-table tr:nth-child(2) td:nth-child(2)').text
+    raw = Capybara.first(:xpath, '//tr[contains(.,"Номер свидетельства")]/td[2]').text
+  end
+
+  def status
+    raw = Capybara.first(:xpath, '//tr[contains(.,"статус членства")]/td[2]').text
+    return :w if raw[/состоит/i]
+    return :e if raw[/исключен/i]
   end
 
 end
-
-# Smvstroy.new.perform
