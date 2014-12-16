@@ -1,4 +1,4 @@
 .idea/
 data/*.*
 /lib/processors/test.rb
-/lib/processors/smvstroy.rb
+/lib/templates
