@@ -72,7 +72,6 @@ class Npeas
 
   def ogrn
     raw = @doc.at_css('tr:contains("Основной государственный")').css('td')[1].text
-    raw
   end
 
   def short_name
