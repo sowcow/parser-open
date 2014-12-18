@@ -8,4 +8,17 @@ class String
     end
     post_data
   end
+
+
+  #monkey patch strip message so that they strip off ANY spaces
+  def strip
+    self.gsub /\A[[:space:]]+|[[:space:]]+\z/, ''
+  end
+  def strip!
+    self.gsub! /\A[[:space:]]+|[[:space:]]+\z/, ''
+  end
 end
+
+
+
+

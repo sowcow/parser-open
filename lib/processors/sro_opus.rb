@@ -35,7 +35,7 @@ class SroOpus
   end
 
   def iterate
-    @links[0.each do |link|
+    @links.each do |link|
       puts "start parsing #{link}"
       begin
         @doc = Nokogiri::HTML(open(link))
@@ -49,7 +49,7 @@ class SroOpus
         begin
           value = self.send m #for status symbols
           value = '-' if (value.nil? or value.empty?)
-          value.gsub!(/\A[[:space:]]+|[[:space:]]+\z/, '') if value.is_a? String
+          value.strip! if value.is_a? String
         rescue
           value = '-'
         end
