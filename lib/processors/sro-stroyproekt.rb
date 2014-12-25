@@ -93,8 +93,6 @@ class SroStroyproekt
         nil
       when /Действует/
         :w
-      else
-        raise [id, text].inspect
       end
     end
 
@@ -135,12 +133,12 @@ class SroStroyproekt
 
     def date raw
       return nil if raw == ''
-      raw[/от (\d\d\.\d\d\.\d\d\d\d)/, 1] or raise [raw].inspect
+      raw[/от (\d\d\.\d\d\.\d\d\d\d)/, 1]
     end
 
     def cert_num raw
       return nil if raw == ''
-      raw[/^№ (.*) от/, 1] or raise [raw].inspect
+      raw[/^№ (.*) от/, 1]
     end
 
     def city raw
@@ -150,7 +148,7 @@ class SroStroyproekt
       tests.push /\b([гсп]\. ?[А-Яа-я\- ]+)\b/
       tests.push /\b([д]\. ?[А-Яа-я\-][А-Яа-я\- ]+)\b/
       tests.push /\b((Р\. П\.|р\.п\.|рабочий поселок|город) [А-Яа-я\- ]+)\b/
-      raw[tests.find { |x| raw =~ x }, 1] or raise
+      raw[tests.find { |x| raw =~ x }, 1]
     end
   end
 end

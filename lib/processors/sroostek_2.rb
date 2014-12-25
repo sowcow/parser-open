@@ -98,7 +98,6 @@ class Sroostek
     def inn
       selector = ':nth-child(6) .last'
       page.at(selector).text.strip
-      .tap { |x| raise unless x =~ /^\d+$/}
     end
 
     def name
@@ -133,7 +132,6 @@ class Sroostek
 
     def ogrn
       section_3_text[/огрн:#{FIRST_NUMBERS}/i, 1]
-      .tap { |x| raise unless x =~ /^\d+$/}
     end
     FIRST_NUMBERS = /[^\d]*?(\d+)/
 
@@ -173,16 +171,12 @@ class Sroostek
     def reformat_date str
       str = '«07» ноября 2013' if str == '«07» ноября2 013' # ...
   
-      raise str unless str.start_with?('«') ||\
-                       str.start_with?('"')
       parts = str.scan /\p{Word}+/
 
       day = parts[0][/\d+/].to_i
-      raise parts[0] if day == 0
 
-      month = MONTHS[parts[1]] or raise str
+      month = MONTHS[parts[1]]
       year = parts[2].to_i
-      raise parts[2] unless year > 1900
       '%02d.%02d.%d' % [day, month, year]
     end
     MONTHS = {
@@ -222,8 +216,6 @@ class Sroostek
       # слишком большой с мусором? XXX
   
   
-      # ожидается одно совпадение
-      raise 'something' unless this.count >= 1 # но есть случаи с двумя...
       this = this.first
   
       # избавиться от мусора вначале
@@ -235,9 +227,7 @@ class Sroostek
       # взять всё до пробела
       this = this.split(' ', 2).first
   
-      raise this unless this =~ /-238/ # они все заканчиваются этим
       this = this.sub /(?<=-238).*/,''
-      raise if this.size <= 16 # не обрубили лишнего
       this
     end
     CERT_NUM = /Номер.свидетельства(.*)/i
@@ -301,8 +291,6 @@ class Sroostek
         if got = known.find { |x,_| x =~ raw }
           return got[1]
         end
-
-        raise "-no-city- #{url}"
       end
     end
   
